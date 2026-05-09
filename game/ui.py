@@ -83,6 +83,9 @@ class App:
     def show_game(self, theme: Theme) -> None:
         self._swap(lambda parent: GameFrame(parent, self, theme))
 
+    def show_game_over(self, theme: Theme, score: int, won: bool) -> None:
+        self._swap(lambda parent: GameOverFrame(parent, self, theme, score, won))
+
     def show_about(self) -> None:
         self._swap(lambda parent: AboutFrame(parent, self))
 
@@ -197,6 +200,7 @@ class GameFrame(tk.Frame):
         self.theme = theme
         self.state = GameState.new(width=GRID_W, height=GRID_H)
         self._after_id: Optional[str] = None
+        self._end_after_id: Optional[str] = None
 
         self.hud = tk.Label(
             self, text=self._hud_text(),
@@ -283,27 +287,96 @@ class GameFrame(tk.Frame):
             self.state.set_direction(direction)
 
     def _cancel_loop(self) -> None:
-        if self._after_id is not None:
-            try:
-                self.app.root.after_cancel(self._after_id)
-            except tk.TclError:
-                pass
-            self._after_id = None
+        for attr in ("_after_id", "_end_after_id"):
+            after_id = getattr(self, attr, None)
+            if after_id is not None:
+                try:
+                    self.app.root.after_cancel(after_id)
+                except tk.TclError:
+                    pass
+                setattr(self, attr, None)
 
     def _on_destroy(self, event) -> None:
         if event.widget is self:
             self._cancel_loop()
 
     def _on_end(self) -> None:
-        # Unit 5: freeze on the final state with an inline message.
-        # Unit 6 will route to a dedicated GameOverFrame.
         end_text = "WIN" if self.state.won else "GAME OVER"
         self.hud.config(
-            text=(
-                f"{end_text} · final score {self.state.score} · "
-                "Esc for menu"
-            )
+            text=f"{end_text} · final score {self.state.score}"
         )
+        # Brief pause so the player sees the final frame, then transition.
+        self._end_after_id = self.app.root.after(
+            700,
+            lambda: self.app.show_game_over(
+                self.theme, self.state.score, self.state.won
+            ),
+        )
+
+
+class GameOverFrame(tk.Frame):
+    def __init__(
+        self, parent: tk.Misc, app: App, theme: Theme, score: int, won: bool,
+    ) -> None:
+        super().__init__(parent, bg=theme.palette.bg)
+        self.app = app
+        self.theme = theme
+
+        headline = "WIN" if won else "GAME OVER"
+        tk.Label(
+            self, text=headline,
+            font=("Segoe UI", 34, "bold"),
+            fg=theme.palette.text, bg=theme.palette.bg,
+        ).pack(pady=(60, 2))
+        tk.Label(
+            self, text=f"{theme.title} · {theme.subtitle}",
+            font=("Segoe UI", 12, "italic"),
+            fg=theme.palette.text, bg=theme.palette.bg,
+        ).pack(pady=(0, 24))
+
+        tk.Label(
+            self, text=f"Final score: {score}",
+            font=("Segoe UI", 14),
+            fg=theme.palette.text, bg=theme.palette.bg,
+        ).pack(pady=(0, 28))
+
+        tk.Label(
+            self, text="“" + theme.game_over_quote + "”",
+            font=("Georgia", 13, "italic"),
+            fg=theme.palette.text, bg=theme.palette.bg,
+            wraplength=500, justify="center",
+        ).pack(pady=4, padx=30)
+        tk.Label(
+            self, text="— " + theme.game_over_attribution,
+            font=("Segoe UI", 9),
+            fg=theme.palette.text, bg=theme.palette.bg,
+        ).pack()
+
+        btn_row = tk.Frame(self, bg=theme.palette.bg)
+        btn_row.pack(pady=36)
+
+        tk.Button(
+            btn_row, text="Play Again",
+            command=lambda: app.show_game(theme),
+            font=("Segoe UI", 11, "bold"),
+            bg=theme.palette.accent, fg=theme.palette.text,
+            activebackground=theme.palette.text,
+            activeforeground=theme.palette.bg,
+            relief="flat", borderwidth=0, cursor="hand2",
+            padx=18, pady=6,
+        ).pack(side="left", padx=8)
+        tk.Button(
+            btn_row, text="Back to Menu",
+            command=app.show_menu,
+            font=("Segoe UI", 11),
+            bg=theme.palette.bg, fg=theme.palette.text,
+            activebackground=theme.palette.accent,
+            activeforeground=theme.palette.text,
+            relief="solid", borderwidth=1, cursor="hand2",
+            padx=14, pady=6,
+        ).pack(side="left", padx=8)
+
+        app.bind_key("<Escape>", lambda e: app.show_menu())
 
 
 class AboutFrame(tk.Frame):
