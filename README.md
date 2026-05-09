@@ -1,1 +1,1 @@
-Project for Hist170E. Lu Xun's Diary of a Madman and how it relates to the present-day Chinese surveillance state.
+Project for Hist170E. Lu Xun's Diary of a Madman and how it parallels the present-day Chinese surveillance state.
