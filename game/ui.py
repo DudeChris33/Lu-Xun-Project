@@ -10,8 +10,10 @@ GameFrame is a stub here; Unit 5 wires it to the engine.
 from __future__ import annotations
 
 import tkinter as tk
+from typing import Optional
 
 from game.content import ABOUT_TEXT, PROJECT_SUBTITLE, PROJECT_TITLE
+from game.engine import DEFAULT_HEIGHT, DEFAULT_WIDTH, Direction, GameState
 from game.themes import THEME_1918, THEME_2018, Theme
 
 
@@ -21,6 +23,21 @@ MENU_FG_DIM = "#999999"
 
 WINDOW_SIZE = 600
 WINDOW_TITLE = "Snake — Lu Xun Edition"
+
+CELL_SIZE = 18
+GRID_W = DEFAULT_WIDTH
+GRID_H = DEFAULT_HEIGHT
+CANVAS_W = CELL_SIZE * GRID_W
+CANVAS_H = CELL_SIZE * GRID_H
+TICK_MS = 120
+EMOJI_FONT_NAME = "Segoe UI Emoji"
+
+_KEY_TO_DIRECTION = {
+    "w": Direction.UP,
+    "a": Direction.LEFT,
+    "s": Direction.DOWN,
+    "d": Direction.RIGHT,
+}
 
 
 class App:
@@ -172,26 +189,121 @@ class TitleCardFrame(tk.Frame):
 
 
 class GameFrame(tk.Frame):
-    """Stub for Unit 4. Gameplay wired in Unit 5."""
+    """Active gameplay: engine + Canvas + WASD."""
 
     def __init__(self, parent: tk.Misc, app: App, theme: Theme) -> None:
         super().__init__(parent, bg=theme.palette.bg)
         self.app = app
         self.theme = theme
+        self.state = GameState.new(width=GRID_W, height=GRID_H)
+        self._after_id: Optional[str] = None
+
+        self.hud = tk.Label(
+            self, text=self._hud_text(),
+            font=("Segoe UI", 12, "bold"),
+            fg=theme.palette.text, bg=theme.palette.bg,
+        )
+        self.hud.pack(pady=(8, 4))
+
+        self.canvas = tk.Canvas(
+            self, width=CANVAS_W, height=CANVAS_H,
+            bg=theme.palette.bg,
+            highlightthickness=0, bd=0,
+        )
+        self.canvas.pack()
 
         tk.Label(
-            self,
-            text=f"[Game canvas — {theme.title} — Unit 5 stub]",
+            self, text="WASD to move · Esc for menu",
+            font=("Segoe UI", 9),
             fg=theme.palette.text, bg=theme.palette.bg,
-            font=("Segoe UI", 14),
-        ).pack(expand=True)
-        tk.Label(
-            self, text="Esc to return to menu",
-            fg=theme.palette.text, bg=theme.palette.bg,
-            font=("Segoe UI", 10),
-        ).pack(pady=20)
+        ).pack(pady=(6, 0))
 
-        app.bind_key("<Escape>", lambda e: app.show_menu())
+        app.bind_key("<Key>", self._on_key)
+        self.bind("<Destroy>", self._on_destroy)
+
+        self._draw()
+        self._after_id = app.root.after(TICK_MS, self._tick)
+
+    def _hud_text(self) -> str:
+        return (
+            f"{self.theme.title} · {self.theme.subtitle}"
+            f"    Score: {self.state.score}"
+        )
+
+    def _tick(self) -> None:
+        if not self.winfo_exists():
+            return
+        self.state.tick()
+        self._draw()
+        self.hud.config(text=self._hud_text())
+        if self.state.game_over or self.state.won:
+            self._cancel_loop()
+            self._on_end()
+        else:
+            self._after_id = self.app.root.after(TICK_MS, self._tick)
+
+    def _draw(self) -> None:
+        canvas = self.canvas
+        palette = self.theme.palette
+        canvas.delete("all")
+        for x in range(0, CANVAS_W + 1, CELL_SIZE):
+            canvas.create_line(x, 0, x, CANVAS_H, fill=palette.grid)
+        for y in range(0, CANVAS_H + 1, CELL_SIZE):
+            canvas.create_line(0, y, CANVAS_W, y, fill=palette.grid)
+
+        for i, (gx, gy) in enumerate(self.state.snake):
+            cx = gx * CELL_SIZE + CELL_SIZE // 2
+            cy = gy * CELL_SIZE + CELL_SIZE // 2
+            if i == 0:
+                glyph = self.theme.snake_head_glyph
+            else:
+                glyphs = self.theme.snake_body_glyphs
+                glyph = glyphs[(i - 1) % len(glyphs)]
+            canvas.create_text(
+                cx, cy, text=glyph,
+                font=(EMOJI_FONT_NAME, CELL_SIZE - 4),
+            )
+
+        if self.state.prey is not None:
+            gx, gy = self.state.prey
+            cx = gx * CELL_SIZE + CELL_SIZE // 2
+            cy = gy * CELL_SIZE + CELL_SIZE // 2
+            canvas.create_text(
+                cx, cy, text=self.theme.prey_glyph,
+                font=(EMOJI_FONT_NAME, CELL_SIZE - 4),
+            )
+
+    def _on_key(self, event) -> None:
+        if event.keysym == "Escape":
+            self._cancel_loop()
+            self.app.show_menu()
+            return
+        direction = _KEY_TO_DIRECTION.get(event.keysym.lower())
+        if direction is not None:
+            self.state.set_direction(direction)
+
+    def _cancel_loop(self) -> None:
+        if self._after_id is not None:
+            try:
+                self.app.root.after_cancel(self._after_id)
+            except tk.TclError:
+                pass
+            self._after_id = None
+
+    def _on_destroy(self, event) -> None:
+        if event.widget is self:
+            self._cancel_loop()
+
+    def _on_end(self) -> None:
+        # Unit 5: freeze on the final state with an inline message.
+        # Unit 6 will route to a dedicated GameOverFrame.
+        end_text = "WIN" if self.state.won else "GAME OVER"
+        self.hud.config(
+            text=(
+                f"{end_text} · final score {self.state.score} · "
+                "Esc for menu"
+            )
+        )
 
 
 class AboutFrame(tk.Frame):
