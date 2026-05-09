@@ -17,7 +17,7 @@ This is the project's first piece of code, so it also establishes the multi-file
 - [ ] 2018 theme: chain glyphs are surveillance devices (📱📷🛰️), prey is a dissident (🚩 or 👤 with sign), themed palette
 - [ ] Game-over screen shows score, a theme-specific quote, and "Play Again" / "Back to Menu" buttons
 - [ ] About screen scrollable, lists sources from `CITATIONS.md`
-- [ ] Engine tests pass via `pytest` without opening a tkinter window
+- [ ] Engine tests pass via `python -m unittest discover tests` without opening a tkinter window
 - [ ] No new linter/type errors; conventions in `CLAUDE.md` updated to reflect the new layout
 
 ## Design Notes
@@ -41,8 +41,7 @@ Build a tkinter Snake game whose two modes — 1918 cannibal villagers and 2018 
 | `game/themes.py` | `Theme` dataclass: name, palette, snake-glyph cycle, prey glyph, menu blurb, title-card quote, game-over quote, about-blurb. Two instances: `THEME_1918`, `THEME_2018` |
 | `game/content.py` | About-screen long text, organized for review/citation |
 | `tests/__init__.py` | Test package marker |
-| `tests/test_engine.py` | Engine unit tests (see Tests needed) |
-| `pyproject.toml` | Project metadata + pytest as the only dev dep |
+| `tests/test_engine.py` | Engine unit tests using stdlib `unittest` |
 | `CITATIONS.md` (project root) | Lu Xun edition cited for in-game quotes; secondary sources for the 2018 framing |
 | `README.md` (update) | Add a "Run" section: `python -m game`, plus `pytest` for tests |
 | `CLAUDE.md` (update) | Add `game/` package convention, `tests/` location, pytest decision |
@@ -57,7 +56,7 @@ Build a tkinter Snake game whose two modes — 1918 cannibal villagers and 2018 
 6. **Wall collision ends game** (no wrap). Fits the thesis: systems meet limits.
 7. **Game-over flow:** themed screen with score + a Lu Xun quote + Play Again / Back to Menu.
 8. **Window is fixed-size**, 600×600 px, 30×30 grid (20 px cells). Avoids resize-handling complexity.
-9. **`pyproject.toml` over `requirements.txt`.** Modern Python default; one file holds metadata + dev deps.
+9. **No dependency manifest yet.** Project uses only stdlib (`tkinter`, `unittest`). Per user preference: builtin libs where possible; introduce `requirements.txt` only if an external dep becomes necessary.
 10. **Citations live in `CITATIONS.md` at project root.** Every in-game quote tagged with a source key (e.g., `[Lyell-1990]`) so the academic-integrity link from CLAUDE.md is enforced.
 
 ### Edge cases
@@ -82,7 +81,7 @@ Build a tkinter Snake game whose two modes — 1918 cannibal villagers and 2018 
 
 ### Docs affected
 - New: `README.md` run section, `CITATIONS.md`
-- Updated: `CLAUDE.md` (layer conventions for `game/` and `tests/`, pytest as test framework, pyproject as manifest), `memory.md` (decisions log)
+- Updated: `CLAUDE.md` (layer conventions for `game/` and `tests/`, `unittest` as test framework, no manifest), `memory.md` (decisions log)
 
 ### Open questions — resolved
 1. ~~Translation~~ → **Yang & Yang**, the version included as `Diary of a Madman.pdf` at project root.
