@@ -3,7 +3,7 @@
 _Hygiene: max 5 bullets per section. Outcomes over narrative. Archive when resolved._
 
 ## Current Focus
-- Building Snake (Lu Xun edition) — request: `planning/requests/snake_lu_xun.md`
+- Snake (Lu Xun edition) shipped on `feat/snake-lu-xun` (closed 2026-05-09). Next: pick the actual title-card and game-over quotes to replace placeholders in `game/themes.py`.
 
 ## Key Decisions
 _Non-obvious choices made — why, not just what._
@@ -18,6 +18,7 @@ _Fragile areas, known debt, things to tread carefully._
 - Emoji rendering on Windows tkinter is font-dependent — every theme must carry an ASCII fallback glyph
 
 ## In Progress
-- `planning/requests/snake_lu_xun.md` — plan approved, building not yet started
+-
 
 ## Archive
+- 2026-05-09 — Snake (Lu Xun edition) shipped: `game/` package (engine/themes/content/ui), `tests/` with 19 unittest cases, `CITATIONS.md`. Quotes still placeholders pending translation lookup. See `planning/done/snake_lu_xun.md`.

@@ -13,7 +13,7 @@
 
 ## Project Map
 
-Academic Python project for Hist170E at UCSC, focused on Lu Xun (鲁迅), the seminal early 20th-century Chinese writer. The project is in its earliest phase — no source files exist yet. The gitignore targets Python, so all scripts and analysis will be in Python. Work is done on the `main` branch.
+Academic Python project for Hist170E at UCSC, focused on Lu Xun (鲁迅) and how *Diary of a Madman* (1918) parallels the modern PRC surveillance state. The first artifact is `game/`, a tkinter Snake game with two reskins — 1918 cannibal villagers and 2018 surveillance hardware — played through identical mechanics to argue that the system grows by absorbing the individual who tries to speak. Engine and UI are split so the engine can be tested in isolation. Feature branches `type/short-description` merged into `main`.
 
 ---
 
@@ -31,19 +31,26 @@ Academic Python project for Hist170E at UCSC, focused on Lu Xun (鲁迅), the se
 
 ## Layer Conventions
 
-### Scripts / Analysis
-_No scripts exist yet. When created, follow this pattern:_
-- One script = one clearly named task (e.g., `analyze_word_frequency.py`)
-- All scripts should be runnable from the project root
-- Forbidden: mixing data loading, processing, and output in a single function
+### Game package (`game/`)
+- `engine.py` is pure data + state — **never imports tkinter**. UI consumes it.
+- `themes.py` adds new modes as `Theme` dataclass instances, not subclasses.
+- `ui.py` owns the `tk.Tk` root and uses an `App`-mediated frame swap; key bindings are tracked centrally so each swap clears them (no stale handlers calling into destroyed frames).
+- Entry point: `python -m game` runs `game/__main__.py`.
+- Forbidden: importing `tkinter` from `engine.py` or anything the engine imports.
+
+### Tests (`tests/`)
+- Stdlib `unittest`. Run from project root: `python -m unittest discover tests`.
+- Engine logic covered exhaustively; UI rendering is not testable without a display, so only an import smoke test exists for `game.ui`.
+- Forbidden: introducing pytest or any external test dep without a recorded decision in `memory.md`.
+
+### Academic content
+- Quoted passages live in `game/themes.py` and `game/content.py` strings, tagged with `[QUOTE: … — TBD]` placeholders until the final source key is locked in.
+- Every quote that ships must trace to an entry in `CITATIONS.md`.
 
 ### Data / Sources
-_No data files exist yet._
-- Raw source texts go in `data/raw/`; processed outputs in `data/processed/`
-- Forbidden: committing large binary files — use `.gitignore` or a manifest
-
-### Tests
-_No test framework established yet — fill in when first tests are written._
+_No data files yet._
+- Raw source texts go in `data/raw/`; processed outputs in `data/processed/`.
+- Forbidden: committing large binary files — use `.gitignore` or a manifest.
 
 ---
 

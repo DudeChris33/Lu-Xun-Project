@@ -1,6 +1,6 @@
 # Snake — Lu Xun Edition (1918 / 2018)
 
-**Status**: open
+**Status**: done
 **Date opened**: 2026-05-09
 **Opened by**: Chris
 
@@ -89,7 +89,16 @@ Build a tkinter Snake game whose two modes — 1918 cannibal villagers and 2018 
 3. ~~Specific quotes~~ → **Deferred.** Title-card and game-over strings will use clearly-marked placeholders (e.g., `"[QUOTE: 1918 title card — TBD]"`). Final selection happens after the code is working.
 
 ## Resolution
-**Closed**:
-**Branch**:
+**Closed**: 2026-05-09
+**Branch**: `feat/snake-lu-xun`
 **Files changed**:
-**Tests added**:
+- new: `.gitignore`, `CITATIONS.md`
+- new: `game/__init__.py`, `game/__main__.py`, `game/engine.py`, `game/themes.py`, `game/content.py`, `game/ui.py`
+- new: `tests/__init__.py`, `tests/test_engine.py`, `tests/test_themes.py`, `tests/test_ui_import.py`
+- modified: `README.md`, `CLAUDE.md`, `memory.md`
+
+**Tests added**: 19 (13 engine cases, 4 theme sanity checks, 2 UI import smoke)
+
+**Carry-over** (out of scope, recorded for follow-up):
+- Title-card and game-over quote placeholders still in `game/themes.py` (open question 3 was deferred until the code worked end-to-end).
+- The pre-existing `pip upgrade` commit on `main` tracks the local `.venv/` directory; `.gitignore` only stops new venv files. A separate `git rm -r --cached .venv` cleanup is recommended.
