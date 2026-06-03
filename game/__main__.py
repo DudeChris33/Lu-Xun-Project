@@ -4,8 +4,8 @@ from game.ui import App
 
 
 def main() -> None:
-    App().run()
+	App().run()
 
 
 if __name__ == "__main__":
-    main()
+	main()

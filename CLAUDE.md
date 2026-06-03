@@ -13,7 +13,7 @@
 
 ## Project Map
 
-Academic Python project for Hist170E at UCSC, focused on Lu Xun (鲁迅) and how *Diary of a Madman* (1918) parallels the modern PRC surveillance state. The first artifact is `game/`, a tkinter Snake game with two reskins — 1918 cannibal villagers and 2018 surveillance hardware — played through identical mechanics to argue that the system grows by absorbing the individual who tries to speak. Engine and UI are split so the engine can be tested in isolation. Feature branches `type/short-description` merged into `main`.
+Academic Python project for Hist170E at UC Irvine, focused on Lu Xun (鲁迅) and how *Diary of a Madman* (1918) parallels the modern PRC surveillance state. The first artifact is `game/`, a tkinter Snake game with two reskins — 1918 cannibal villagers and 2018 surveillance hardware — played through identical mechanics to argue that the system grows by absorbing the individual who tries to speak. Engine and UI are split so the engine can be tested in isolation. Feature branches `type/short-description` merged into `main`.
 
 ---
 

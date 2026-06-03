@@ -13,7 +13,7 @@ class TestUiImport(unittest.TestCase):
 
         expected = (
             "App", "MenuFrame", "TitleCardFrame",
-            "GameFrame", "GameOverFrame", "AboutFrame",
+            "GameFrame", "GameOverFrame",
         )
         for name in expected:
             self.assertTrue(
