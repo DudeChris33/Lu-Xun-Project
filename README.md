@@ -1,6 +1,6 @@
 # Snake — Lu Xun Edition
 
-History 170E project, UC Irvine. A tkinter Snake game with two thematic modes — **1918** (cannibal villagers from Lu Xun's *Diary of a Madman*) and **2018** (modern PRC surveillance state) — playing the same allegory through different reskins. The mechanic is identical because the claim is structural: the system grows by absorbing the individual who tries to speak.
+History 170E project, UC Irvine. Created with the help of Claude Code. A tkinter Snake game with two thematic modes — **1918** (cannibal villagers from Lu Xun's *Diary of a Madman*) and **2018** (modern PRC surveillance state) — playing the same allegory through different reskins. The mechanic is identical because the claim is structural: the system grows by absorbing the individual who tries to speak.
 
 ## Run
 
