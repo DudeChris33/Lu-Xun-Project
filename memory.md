@@ -12,6 +12,7 @@ _Non-obvious choices made — why, not just what._
 - **Engine/UI split**: pure-Python `game/engine.py` (no tkinter import) so tests run without a window; `game/ui.py` is the tk shell. First multi-file pattern in the project
 - **Themes as data**: `Theme` dataclass instances in `game/themes.py`, not subclasses — adding a third year = one new instance
 - **Test framework**: `unittest` (stdlib); tests live under `tests/`, run via `python -m unittest discover tests`. No `pyproject.toml` or `requirements.txt` — user prefers builtin libs; manifest only if/when external deps become necessary
+- **Distribution**: PyInstaller (dev-only dep, not in game runtime) builds `dist/SnakeLuXun.exe` via `pyinstaller --onefile --windowed --name "SnakeLuXun" game/__main__.py`. `build/`, `dist/`, `*.spec` are gitignored.
 
 ## Watch List
 _Fragile areas, known debt, things to tread carefully._

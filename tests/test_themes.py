@@ -27,7 +27,7 @@ class TestThemes(unittest.TestCase):
     def test_glyphs_are_non_empty(self):
         for theme in (THEME_1918, THEME_2018):
             self.assertTrue(theme.snake_head_glyph)
-            self.assertTrue(theme.snake_body_glyphs)
+            self.assertTrue(theme.snake_body_glyph)
             self.assertTrue(theme.prey_glyph)
             self.assertTrue(theme.snake_glyph_fallback)
             self.assertTrue(theme.prey_glyph_fallback)
